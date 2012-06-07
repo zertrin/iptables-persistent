@@ -30,6 +30,9 @@ start)
     if [ $ENABLE_ROUTING -ne 0 ]; then
         # Enable Routing
         echo 1 > /proc/sys/net/ipv4/ip_forward
+        if [ $IPV6 -ne 0 ]; then
+            echo 1 >/proc/sys/net/ipv6/conf/all/forwarding
+        fi
     fi
 
     if [ $MODULES ]; then
@@ -41,7 +44,10 @@ start)
     if [ -f /etc/iptables/rules ]; then
         iptables-restore </etc/iptables/rules
     fi
-
+    if [ $IPV6 -ne 0 -a -f /etc/iptables/ipv6_rules ]; then
+        ip6tables-restore </etc/iptables/ipv6_rules
+    fi
+ 
     # restart of fail2ban
     if [ -x /etc/init.d/fail2ban ]; then
         /etc/init.d/fail2ban start
@@ -61,6 +67,13 @@ stop|force-stop)
         cp /etc/iptables/rules /etc/iptables/rules.bak
         # Save new rules
         iptables-save >/etc/iptables/rules
+
+        if [ $IPV6 -ne 0 ]; then
+            # Backup old rules
+            cp /etc/iptables/ipv6_rules /etc/iptables/ipv6_rules.bak
+            # Save new rules
+            ip6tables-save >/etc/iptables/ipv6_rules
+        fi
     fi
 
     # stop fail2ban before flushing iptables chains
@@ -78,6 +91,17 @@ stop|force-stop)
     iptables -t nat -F
     iptables -t mangle -F
 
+    if [ $IPV6 -ne 0 ]; then
+        # Restore Default Policies
+        ip6tables -P INPUT ACCEPT
+        ip6tables -P FORWARD ACCEPT
+        ip6tables -P OUTPUT ACCEPT
+
+        # Flush rules on default tables
+        ip6tables -F
+        ip6tables -t mangle -F
+    fi
+
     if [ $MODULES ]; then
         # Unload previously loaded modules
         modprobe -r $MODULES
@@ -87,6 +111,9 @@ stop|force-stop)
     if [ $ENABLE_ROUTING -ne 0 ]; then
         # Disable Routing
         echo 0 > /proc/sys/net/ipv4/ip_forward
+        if [ $IPV6 -ne 0 ]; then
+            echo 0 >/proc/sys/net/ipv6/conf/all/forwarding
+        fi
     fi
 
     # start of fail2ban
@@ -112,6 +139,19 @@ status)
     echo "Mangle Rules:"
     echo "----------------"
     iptables -t mangle -L -v
+
+    if [ $IPV6 -ne 0 ]; then
+        echo "**********"
+        echo "** IPV6 **"
+        echo "**********"
+        echo "Filter Rules:"
+        echo "--------------"
+        ip6tables -L -v
+        echo ""
+        echo "Mangle Rules:"
+        echo "----------------"
+        ip6tables -t mangle -L -v
+    fi
     ;;
 
 *)

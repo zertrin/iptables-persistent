@@ -1,29 +1,36 @@
 iptables-persistent
-================================
+===================
 
-Based on Debian's iptables-persistent package that load iptables using rules specified at `/etc/iptables/rules`
+Based on Debian's iptables-persistent package that loads iptables rules using rules specified at `/etc/iptables/rules`
 
-This one is bit modified to properly handle fail2ban's rules reloading (fail2ban inserts its own rules at the beginning of iptables current ruleset when (re)started) when starting/stopping/reloading iptables's rules via iptables-persistent.
+This one is modified to properly handle fail2ban's rules reloading when starting/stopping/reloading iptables's rules via iptables-persistent (fail2ban inserts its own rules at the _beginning_ of iptables current ruleset when (re)started). If fail2ban is not installed, iptables-persistent will ignore any action related to file2ban.
 
-Provided is an example set of rules as quickstart. You should review it and adapt it to your needs.
+For IPv6 enabled servers, ip6tables rules management is properly handled too, by activating the corresponding parameter in the configuration file (see below).
+
+Provided is an example set of rules as quickstart. **You should review it and adapt it to your needs**.
 
 ### Installation
 
 To use:
 
-* copy `iptables-persistent` in `/etc/init.d/` and make it executable 
+* copy the init.d script `iptables-persistent` to `/etc/init.d/` and make it executable 
 
-`cp iptables-persistent /etc/init.d/iptables-persistent
-chmod +x /etc/init.d/iptables-persistent`
+* copy `iptables-persistent.conf` to `/etc/default/iptables-persistent.conf` and **edit it to suit your needs**
 
-* copy `iptables-persistent.conf` to `/etc/default/iptables-persistent.conf` and edit it if needed
+* copy `rules` to `/etc/iptables/rules` and **edit it to suit your needs**
 
-`cp iptables-persistent.conf /etc/default/iptables-persistent.conf`
-
-* copy `rules` to `/etc/iptables/rules` and edit it to suit your needs
-
-`cp rules /etc/iptables/rules`
+* copy `ipv6_rules` to `/etc/iptables/ipv6_rules` and **edit it to suit your needs** (you copy this file even if you don't activate IPv6 support in the configuration, it will be ignored)
 
 * make iptables-persistent to be lauched at startup
 
 `update-rc.d iptables-persistent defaults`
+
+### Configuration variables
+
+Edit `/etc/default/iptables-persistent.conf` to set the following parameters:
+
+* **SAVE_NEW_RULES** (default: 0) - if set different than 0 then the current iptables ruleset will be saved with iptables-save when iptables-persistent is stopped (or restarted)
+
+* **MODULES** (default: "") - a space-separated list of the modules that iptables-persistent should load/unload. Useful to activate FTP connection tracking for example.
+
+* **IPV6** (default: 0) - if set different than 0 it will additionnaly use ip6tables to handle the loading/unloading of the ruleset stored at `/etc/iptables/ipv6_rules`
