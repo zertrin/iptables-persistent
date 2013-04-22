@@ -19,7 +19,7 @@ To use:
 
 * copy `rules` to `/etc/iptables/rules` and **edit it to suit your needs**
 
-* copy `ipv6_rules` to `/etc/iptables/ipv6_rules` and **edit it to suit your needs** (you copy this file even if you don't activate IPv6 support in the configuration, it will be ignored)
+* copy `ipv6_rules` to `/etc/iptables/ipv6_rules` and **edit it to suit your needs** (you can copy this file even if you don't activate IPv6 support in the configuration, it will be ignored)
 
 * make iptables-persistent to be lauched at startup
 
