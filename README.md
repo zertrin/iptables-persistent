@@ -3,11 +3,11 @@ iptables-persistent
 
 Based on Debian's iptables-persistent package that loads iptables rules using rules specified at `/etc/iptables/rules`
 
-This one is modified to properly handle fail2ban's rules reloading when starting/stopping/reloading iptables's rules via iptables-persistent (fail2ban inserts its own rules at the _beginning_ of iptables current ruleset when (re)started). If fail2ban is not installed, iptables-persistent will ignore any action related to file2ban.
+This one is modified to **properly handle fail2ban's rules reloading** when starting/stopping/reloading iptables's rules via iptables-persistent (fail2ban inserts its own rules at the _beginning_ of iptables current ruleset when (re)started). If fail2ban is not installed, iptables-persistent will ignore any action related to file2ban.
 
-For IPv6 enabled servers, ip6tables rules management is properly handled too, by activating the corresponding parameter in the configuration file (see below).
+For **IPv6** enabled servers, ip6tables rules management is properly handled too, by activating the corresponding parameter in the configuration file (see below).
 
-Provided is an example set of rules as quickstart. **You should review it and adapt it to your needs**.
+Provided is an example set of rules as quickstart. It is pretty restrictive, forwarding being disabled and only DNS, ping and SSH being allowed inbound by default. **You must review it and adapt it to your needs**.
 
 ### Installation
 
@@ -34,3 +34,5 @@ Edit `/etc/default/iptables-persistent.conf` to set the following parameters:
 * **MODULES** (default: "") - a space-separated list of the modules that iptables-persistent should load/unload. Useful to activate FTP connection tracking for example.
 
 * **IPV6** (default: 0) - if set different than 0 it will additionnaly use ip6tables to handle the loading/unloading of the ruleset stored at `/etc/iptables/ipv6_rules`
+
+* **ENABLE_ROUTING** (default: 0) – if set different than 0 then routing is enabled (in `/proc/sys/net/ipv4/ip_forward` and `/proc/sys/net/ipv6/conf/all/forwarding`), otherwise it’s not.
