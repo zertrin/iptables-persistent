@@ -1,13 +1,15 @@
 iptables-persistent
 ===================
 
-Based on Debian's iptables-persistent package that loads iptables rules using rules specified at `/etc/iptables/rules`
+This is a **fork** of Debian's *iptables-persistent* package that loads iptables rules using rules specified at `/etc/iptables/rules`
 
-This one is modified to **properly handle fail2ban's rules reloading** when starting/stopping/reloading iptables's rules via iptables-persistent (fail2ban inserts its own rules at the _beginning_ of iptables current ruleset when (re)started). If fail2ban is not installed, iptables-persistent will ignore any action related to file2ban.
+**UPDATE 2014-09-20**: The *iptables-persistent* package in Debian **jessie** has significanlty changed compared to the previous version, and has somehow been renamed to *netfilter-persistent*. This script is not related to *netfilter-persistent* at all.
+
+This version is modified to **properly handle fail2ban's rules reloading** when starting/stopping/reloading iptables's rules via iptables-persistent (fail2ban inserts its own rules at the _beginning_ of iptables current ruleset when (re)started). If fail2ban is not installed, iptables-persistent will ignore any action related to file2ban.
 
 For **IPv6** enabled servers, ip6tables rules management is properly handled too, by activating the corresponding parameter in the configuration file (see below).
 
-Provided is an example set of rules as quickstart. It is pretty restrictive, forwarding being disabled and only DNS, ping and SSH being allowed inbound by default. **You must review it and adapt it to your needs**.
+An example set of rules is included as quickstart. It is pretty restrictive: forwarding is disabled and only DNS, ping and SSH are allowed inbound by default. **You MUST review it and edit it to suit your needs!**.
 
 ### Installation
 
