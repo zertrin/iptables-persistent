@@ -45,10 +45,10 @@ start)
         fi
     fi
 
-    if [ $modules ]; then
+    if [ $MODULES ]; then
         # Load Modules
-        modprobe -a $modules
-        log_action_cont_msg "Modules $modules"
+        modprobe -a $MODULES
+        log_action_cont_msg "Modules $MODULES"
     fi
 
     # Load saved rules
@@ -135,9 +135,9 @@ stop|force-stop)
         ip6tables -t mangle -F
     fi
 
-    if [ $modules ]; then
-        # Unload previously loaded modules
-        modprobe -r $modules
+    if [ $MODULES ]; then
+        # Unload previously loaded MODULES
+        modprobe -r $MODULES
     fi
 
     # Disable Routing if enabled
