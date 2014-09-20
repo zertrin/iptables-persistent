@@ -38,17 +38,17 @@ start)
     if [ $ENABLE_ROUTING -ne 0 ]; then
         # Enable Routing
         echo 1 > /proc/sys/net/ipv4/ip_forward
-        log_action_cont_msg "v4 Routing"
+        log_action_cont_msg "IPv4 routing enabled"
         if [ $IPV6 -ne 0 ]; then
             echo 1 >/proc/sys/net/ipv6/conf/all/forwarding
-            log_action_cont_msg "v6 Routing"
+            log_action_cont_msg "IPv6 routing enabled"
         fi
     fi
 
     if [ $MODULES ]; then
         # Load Modules
         modprobe -a $MODULES
-        log_action_cont_msg "Modules $MODULES"
+        log_action_cont_msg "Modules $MODULES loaded"
     fi
 
     # Load saved rules
@@ -57,14 +57,14 @@ start)
         if [ $? -ne 0 ]; then
             rc=1
         fi
-        log_action_cont_msg "IPv4"
+        log_action_cont_msg "IPv4 rules loaded"
     fi
     if [ $IPV6 -ne 0 -a -f /etc/iptables/ipv6_rules ]; then
         ip6tables-restore </etc/iptables/ipv6_rules
         if [ $? -ne 0 ]; then
             rc=1
         fi
-        log_action_cont_msg "IPv6"
+        log_action_cont_msg "IPv6 rules loaded"
     fi
 
     log_action_end_msg $rc
@@ -83,6 +83,11 @@ stop|force-stop)
         rm /var/run/iptables
     fi
 
+    # stop fail2ban before flushing iptables chains
+    if [ -x /etc/init.d/fail2ban ]; then
+        /etc/init.d/fail2ban stop
+    fi
+
     log_action_begin_msg "Stopping iptables"
 
     if [ $SAVE_NEW_RULES -ne 0 ]; then
@@ -93,7 +98,7 @@ stop|force-stop)
         if [ $? -ne 0 ]; then
             rc=1
         fi
-        log_action_cont_msg "IPv4"
+        log_action_cont_msg "IPv4 rules saved"
 
         if [ $IPV6 -ne 0 ]; then
             # Backup old rules
@@ -103,15 +108,8 @@ stop|force-stop)
             if [ $? -ne 0 ]; then
                 rc=1
             fi
-            log_action_cont_msg "IPv6"
+            log_action_cont_msg "IPv6 rules saved"
         fi
-    fi
-
-    log_action_end_msg $rc
-
-    # stop fail2ban before flushing iptables chains
-    if [ -x /etc/init.d/fail2ban ]; then
-        /etc/init.d/fail2ban stop
     fi
 
     # Restore Default Policies
@@ -138,16 +136,21 @@ stop|force-stop)
     if [ $MODULES ]; then
         # Unload previously loaded MODULES
         modprobe -r $MODULES
+        log_action_cont_msg "Modules $MODULES unloaded"
     fi
 
     # Disable Routing if enabled
     if [ $ENABLE_ROUTING -ne 0 ]; then
         # Disable Routing
         echo 0 > /proc/sys/net/ipv4/ip_forward
+        log_action_cont_msg "IPv4 routing disabled"
         if [ $IPV6 -ne 0 ]; then
             echo 0 >/proc/sys/net/ipv6/conf/all/forwarding
+            log_action_cont_msg "IPv6 routing disabled"
         fi
     fi
+
+    log_action_end_msg $rc
 
     # start of fail2ban
     if [ -x /etc/init.d/fail2ban ]; then
