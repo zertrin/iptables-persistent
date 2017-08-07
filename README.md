@@ -1,5 +1,5 @@
-iptables-persistent
-===================
+a systemd version of iptables-persistent
+========================================
 
 This is a **fork** of Debian's *iptables-persistent* package that loads iptables rules using rules specified at `/etc/iptables/rules`
 
@@ -15,7 +15,7 @@ An example set of rules is included as quickstart. It is pretty restrictive: for
 
 To use:
 
-* copy the init.d script `iptables-persistent` to `/etc/init.d/` and make it executable 
+* copy the the script `iptables-persistent` to `/usr/sbin/` and make it executable
 
 * copy `iptables-persistent.conf` to `/etc/default/iptables-persistent.conf` and **edit it to suit your needs**
 
@@ -25,7 +25,7 @@ To use:
 
 * make iptables-persistent to be lauched at startup
 
-`update-rc.d iptables-persistent defaults`
+`systemctl enable iptables-persistent.service`
 
 ### Configuration variables
 
