@@ -15,7 +15,9 @@ An example set of rules is included as quickstart. It is pretty restrictive: for
 
 To use:
 
-* copy the the script `iptables-persistent` to `/usr/sbin/` and make it executable
+* copy the script `iptables-persistent` to `/usr/sbin/` and make it executable
+
+* copy the service file `iptables-persistent.service` to `/lib/systemd/system/` and make it readable
 
 * copy `iptables-persistent.conf` to `/etc/default/iptables-persistent.conf` and **edit it to suit your needs**
 
