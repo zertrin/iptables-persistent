@@ -3,6 +3,8 @@ iptables-persistent
 
 This is a **fork** of Debian's *iptables-persistent* package that loads iptables rules using rules specified at `/etc/iptables/rules`
 
+**UPDATE 2018-05-27**: This is not maintained anymore and may or may not work with current Debian setups. Use at your own risk.
+
 **UPDATE 2014-09-20**: The *iptables-persistent* package in Debian **jessie** has significanlty changed compared to the previous version, and has somehow been renamed to *netfilter-persistent*. This script is not related to *netfilter-persistent* at all.
 
 This version is modified to **properly handle fail2ban's rules reloading** when starting/stopping/reloading iptables's rules via iptables-persistent (fail2ban inserts its own rules at the _beginning_ of iptables current ruleset when (re)started). If fail2ban is not installed, iptables-persistent will ignore any action related to file2ban.
